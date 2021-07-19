@@ -1,13 +1,13 @@
 ﻿
 @{char[,] dat = (char[,])ViewData["Message"]; }
-
-<br />
-<br />
+<br/>
+<strong>В реакциях на триггер возможны следующие символы-цвета: 
+    R - Red, G - Green, B - Blue, Y - Yellow, 0 - White, 1 - Black, other - Purple</strong>
 <br />
 <div>
-    <table width="80%" cellpadding="5">
+    <table width="100%" cellpadding="5">
         <tr>
-            <th width="3000">
+            <th width="80%">
                 @{
                     int width = 1500;
                     int height = 700;
@@ -73,33 +73,38 @@
                     }
                 </svg>
             </th>
-            <th>
-                <p>Важно</p>
+            <th width="20%">
+
+                <p>Важно соблюдать следующие условия:</p>
+                <p>Длина триггеров в строке триггеров должна быть одинаковой и равной заданной выше.</p>
+                <p>Триггеры должны быть уникальны и заданы двоичным кодом. Количество элементов в строке с триггерами - чётное.</p>
+                <p>В строке кадра х левый меньше х правого, а y верхний меньше y нижнего, оба y >= 0/</p>
                 <form method="post" asp-action="UserPage">
 
-                    <label>Отступ от клетки до начала триггера</label>
-                    <input type="text" name="userRule.Offset" value="@ViewData["userRule.Offset"]" /><br />
-
-                    <label>Длина триггера</label>
-                    <input type="text" name="userRule.Length" value="@ViewData["userRule.Length"]" /><br />
-
-                    <label>Символ по умолчанию</label>
+                    <label>Символ по умолчанию</label><br />
                     <input type="text" name="userRule.DefaultCellMean" value="@ViewData["userRule.DefaultCellMean"]" /><br />
 
-                    <label>Левая граница</label>
+                    <label>Левая граница</label><br />
                     <input type="text" name="userRule.leftBorder" value="@ViewData["userRule.leftBorder"]" /><br />
 
-                    <label>Правая граница</label>
-                    <input type="text" name="userRule.rightBorder" value="@ViewData["userRule.rightBorder"]" /><br />
+                    <label>Правая граница</label><br />
+                    <input type="text" name="userRule.rightBorder" value="@ViewData["userRule.rightBorder"]" /><br /><br />
+
+                    <label>Отступ от клетки до начала триггера</label><br />
+                    <input type="text" name="userRule.Offset" value="@ViewData["userRule.Offset"]" /><br />
+
+                    <label>Длина триггера</label><br />
+                    <input type="text" name="userRule.Length" value="@ViewData["userRule.Length"]" /><br /><br />
 
                     <label>Строка триггеров </label><br />
-                    <label>триггер 1; реакция 1; ... триггер n; реакция n </label><br />
+                    <label>триггер 1; реакция 1; ... триггер n; реакция n </label><br /><br />
                     <input type="text" name="Rule" value="@ViewData["Rule"]" /><br />
 
-                    <label>Строка для старта</label><br />
+                    <label>Верхняя строка для старта</label><br />
                     <input type="text" name="userRule.startWorkPiece" value="@ViewData["userRule.startWorkPiece"]" /><br />
 
                     <label>Строка кадра</label><br />
+                    <label>x левый; y верхний; х правый; y нижний</label><br />
                     <input type="text" name="Frame" value="@ViewData["Frame"]" /><br />
 
                     <input type="submit" value="Отправить" />
@@ -107,4 +112,5 @@
             </th>
         </tr>
     </table>
+    
 </div>
