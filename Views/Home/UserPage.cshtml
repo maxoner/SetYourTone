@@ -1,0 +1,110 @@
+﻿
+@{char[,] dat = (char[,])ViewData["Message"]; }
+
+<br />
+<br />
+<br />
+<div>
+    <table width="80%" cellpadding="5">
+        <tr>
+            <th width="3000">
+                @{
+                    int width = 1500;
+                    int height = 700;
+                }
+                <svg height="@height" wight="@width" viewBox="0 0 1500 700" xmlns="http://www.w3.org/2000/svg">
+                    @{ Dictionary<string, string> colors = new Dictionary<string, string>(4);
+                        colors.Add("Red", "255, 0, 0");
+                        colors.Add("Green", "0, 128, 0");
+                        colors.Add("Blue", "0, 0, 255");
+                        colors.Add("Yellow", "255, 255, 0");
+                        colors.Add("White", "255, 255, 255");
+                        colors.Add("Black", "0, 0, 0");
+                        colors.Add("Purple", "128, 0, 128");
+
+                        int x = 0, y = 0;
+                        int deltaX;
+                        if (dat.GetLength(0) > dat.GetLength(1))
+                        {
+                            deltaX = width / dat.GetLength(0);
+                        }
+                        else
+                        {
+                            deltaX = height / dat.GetLength(1);
+                        }
+
+                        int SizeSqXY = deltaX;
+
+                        for (int k = 0; k < dat.GetLength(1); k++)
+                        {
+                            for (int i = 0; i < dat.GetLength(0); i++)
+                            {
+                                char item = dat[i, k];
+                                switch (item)
+                                {
+                                    case '1':
+                                        <rect x="@x" y="@y" width="@SizeSqXY" height="@SizeSqXY" fill="rgb(@colors["Black"])" />
+                                        break;
+                                    case 'R':
+                                        <rect x="@x" y="@y" width="@SizeSqXY" height="@SizeSqXY" fill="rgb(@colors["Red"])" />
+                                        break;
+                                    case 'G':
+                                        <rect x="@x" y="@y" width="@SizeSqXY" height="@SizeSqXY" fill="rgb(@colors["Green"])" />
+                                        break;
+                                    case 'B':
+                                        <rect x="@x" y="@y" width="@SizeSqXY" height="@SizeSqXY" fill="rgb(@colors["Blue"])" />
+                                        break;
+                                    case 'Y':
+                                        <rect x="@x" y="@y" width="@SizeSqXY" height="@SizeSqXY" fill="rgb(@colors["Yellow"])" />
+                                        break;
+                                    case '0':
+                                        <rect x="@x" y="@y" width="@SizeSqXY" height="@SizeSqXY" fill="rgb(@colors["White"])" />
+                                        break;
+                                    default:
+                                        <rect x="@x" y="@y" width="@SizeSqXY" height="@SizeSqXY" fill="rgb(@colors["Purple"])" />
+                                        break;
+
+                                }
+                                x += deltaX;
+                            }
+                            x = 0;
+                            y += deltaX;
+                        }
+                    }
+                </svg>
+            </th>
+            <th>
+                <p>Важно</p>
+                <form method="post" asp-action="UserPage">
+
+                    <label>Отступ от клетки до начала триггера</label>
+                    <input type="text" name="userRule.Offset" value="@ViewData["userRule.Offset"]" /><br />
+
+                    <label>Длина триггера</label>
+                    <input type="text" name="userRule.Length" value="@ViewData["userRule.Length"]" /><br />
+
+                    <label>Символ по умолчанию</label>
+                    <input type="text" name="userRule.DefaultCellMean" value="@ViewData["userRule.DefaultCellMean"]" /><br />
+
+                    <label>Левая граница</label>
+                    <input type="text" name="userRule.leftBorder" value="@ViewData["userRule.leftBorder"]" /><br />
+
+                    <label>Правая граница</label>
+                    <input type="text" name="userRule.rightBorder" value="@ViewData["userRule.rightBorder"]" /><br />
+
+                    <label>Строка триггеров </label><br />
+                    <label>триггер 1; реакция 1; ... триггер n; реакция n </label><br />
+                    <input type="text" name="Rule" value="@ViewData["Rule"]" /><br />
+
+                    <label>Строка для старта</label><br />
+                    <input type="text" name="userRule.startWorkPiece" value="@ViewData["userRule.startWorkPiece"]" /><br />
+
+                    <label>Строка кадра</label><br />
+                    <input type="text" name="Frame" value="@ViewData["Frame"]" /><br />
+
+                    <input type="submit" value="Отправить" />
+                </form>
+            </th>
+        </tr>
+    </table>
+</div>
