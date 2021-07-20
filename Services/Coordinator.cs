@@ -10,22 +10,15 @@ namespace SetYourTone.Services
         public char[,] frame;
         //Сюда попадают строки по правилу, триггерам и кадру.
         //Разбиваются, заполняется словарь триггеров и структура правила,
-        public Coordinator (RuleModel userRule, string triggers, string curUserFrame)
+        public Coordinator (RuleModel userRule, Dictionary<string, char> Triggers, string curUserFrame)
         {
             if (userRule.leftBorder == null) userRule.leftBorder= "";
             if (userRule.rightBorder == null) userRule.rightBorder = "";
 
-            string[] triggersSet  = triggers.Split(';');
             string[] stringsCurFrame = curUserFrame.Split(';');
 
-            Dictionary<string, char> Trs = new Dictionary<string, char>();
-            for (int i = 0; i < triggersSet.Length; i += 2)
-            {
-                Trs.Add(triggersSet[i], Convert.ToChar(triggersSet[i + 1]));
-            }
-
             //задаю правило
-            Rule CurRule = new Rule(userRule.Offset, userRule.Length, Trs, userRule.DefaultCellMean, userRule.leftBorder, userRule.rightBorder);
+            Rule CurRule = new Rule(userRule.Offset, userRule.Length, Triggers, userRule.DefaultCellMean, userRule.leftBorder, userRule.rightBorder);
 
             int arrDeep = Convert.ToInt32(stringsCurFrame[3])+1;
 

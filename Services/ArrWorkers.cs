@@ -39,8 +39,8 @@ namespace SetYourTone.Services
         //Метод-заполнитель char массива на основе правила и массива с границами и первой строкой.
         public void Filler(Rule CurRule, int leftBorderLength, int rightBorderLength)
         {
-            //Массив заполняется внутри отступов, которые больше максимального отхождения триггера от заданной точки влево или вправо соответственно.
-            int leftInnerOffset = 0;
+            //Массив заполняется внутри отступов, которые >= максимального отхождения триггера от заданной точки влево или вправо соответственно.
+            int leftInnerOffset = 0; 
             int rightInnerOffset = 0;
             if (CurRule.offset < 0) leftInnerOffset  = Math.Abs(CurRule.offset);
 

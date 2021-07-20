@@ -36,6 +36,9 @@ namespace SetYourTone.Controllers
             userRule.leftBorder = "0";
             userRule.rightBorder = "0";
 
+            StateSaving RowsState = new StateSaving();
+            RowsState.Rule = "100;R;011;G;010;B;001;1";
+
             ViewData["userRule.startWorkPiece"] = userRule.startWorkPiece;
             ViewData["userRule.Offset"] = userRule.Offset;
             ViewData["userRule.Length"] = userRule.Length;
@@ -50,8 +53,7 @@ namespace SetYourTone.Controllers
             //5.Левая граница
             //6.Правая граница
             //7-end. Триггеры в виде подстрока; реакция - символ;
-            string strCurRule = "100;R;011;G;010;B;001;1";
-            ViewData["Rule"] = strCurRule;
+            ViewData["Rule"] = RowsState.Rule;
             //Информация для построения кадра
             //1.Позиция стартовой строки в базовом массиве (на будущее)
             //2.Стартовая строка
@@ -60,7 +62,9 @@ namespace SetYourTone.Controllers
             string strCurFrame = "-10;0;10;10";
             ViewData["Frame"] = strCurFrame;
 
-            Coordinator DefaultFrame = new Coordinator(userRule, strCurRule, strCurFrame);
+            Dictionary<string, char> Trs = Unwraper.TriggersUnwraper (RowsState.Rule);
+
+            Coordinator DefaultFrame = new Coordinator(userRule, Trs, strCurFrame);
             ViewData["Message"] = DefaultFrame.frame;
             return View("UserPage");
         }
@@ -80,17 +84,16 @@ namespace SetYourTone.Controllers
             //4.Левая граница
             //5.Правая граница
             //6-end. Триггеры в виде подстрока; реакция - символ;
-            string strCurRule = RowsState.Rule;
-            ViewData["Rule"] = strCurRule;
+            ViewData["Rule"] = RowsState.Rule;
             //Информация для построения кадра
-            //1.Позиция стартовой строки в базовом массиве (на будущее)
-            //2.Стартовая строка
-            //3;4 координаты левого верхнего угла X относительно центра, а Y положительный сверху вниз
-            //5;6 координаты правого нижнего угла X относительно центра, а Y положительный сверху вниз
+            //1;2 координаты левого верхнего угла X относительно центра, а Y положительный сверху вниз
+            //3;4 координаты правого нижнего угла X относительно центра, а Y положительный сверху вниз
             string strCurFrame = RowsState.Frame;
             ViewData["Frame"] = strCurFrame;
 
-            Coordinator UserFrame = new Coordinator(userRule, strCurRule, strCurFrame);
+            Dictionary<string, char> Trs = Unwraper.TriggersUnwraper(RowsState.Rule);
+
+            Coordinator UserFrame = new Coordinator(userRule, Trs, strCurFrame);
             ViewData["Message"] = UserFrame.frame;
             return View("UserPage");
         }
