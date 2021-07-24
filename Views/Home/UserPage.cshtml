@@ -12,7 +12,7 @@
                     int width = 1500;
                     int height = 700;
                 }
-                <svg height="@height" wight="@width" viewBox="0 0 1500 700" xmlns="http://www.w3.org/2000/svg">
+                <svg height="@height" wight="@width" viewBox="0 0 @width @height" xmlns="http://www.w3.org/2000/svg">
                     @{ Dictionary<string, string> colors = new Dictionary<string, string>(4);
                         colors.Add("Red", "255, 0, 0");
                         colors.Add("Green", "0, 128, 0");
@@ -24,7 +24,7 @@
 
                         int x = 0, y = 0;
                         int deltaX;
-                        if (dat.GetLength(0) > dat.GetLength(1))
+                        if (width / dat.GetLength(0) <= height / dat.GetLength(1))
                         {
                             deltaX = width / dat.GetLength(0);
                         }
@@ -85,10 +85,10 @@
                     <input type="text" name="userRule.DefaultCellMean" value="@ViewData["userRule.DefaultCellMean"]" /><br />
 
                     <label>Левая граница</label><br />
-                    <input type="text" name="userRule.leftBorder" value="@ViewData["userRule.leftBorder"]" /><br />
+                    <input type="text" name="userRule.leftBorder" value="@ViewData["userRule.LeftBorder"]" /><br />
 
                     <label>Правая граница</label><br />
-                    <input type="text" name="userRule.rightBorder" value="@ViewData["userRule.rightBorder"]" /><br /><br />
+                    <input type="text" name="userRule.rightBorder" value="@ViewData["userRule.RightBorder"]" /><br /><br />
 
                     <label>Отступ по x от клетки до начала триггера</label><br />
                     <input type="text" name="userRule.Offset" value="@ViewData["userRule.Offset"]" /><br />
@@ -98,14 +98,14 @@
 
                     <label>Строка триггеров </label><br />
                     <label>триггер 1; реакция 1; ... триггер n; реакция n </label><br /><br />
-                    <input type="text" name="Rule" value="@ViewData["Rule"]" /><br />
+                    <input type="text" name="RowsState.Triggers" value="@ViewData["RowsState.Triggers"]" /><br />
 
                     <label>Верхняя строка для старта</label><br />
-                    <input type="text" name="userRule.startWorkPiece" value="@ViewData["userRule.startWorkPiece"]" /><br />
+                    <input type="text" name="userRule.startLayerWorkPiece" value="@ViewData["userRule.StartLayerWorkPiece"]" /><br />
 
                     <label>Строка кадра</label><br />
                     <label>x левый; y верхний; х правый; y нижний</label><br />
-                    <input type="text" name="Frame" value="@ViewData["Frame"]" /><br />
+                    <input type="text" name="RowsState.Frame" value="@ViewData["RowsState.Frame"]" /><br />
 
                     <input type="submit" value="Отправить" />
                 </form>

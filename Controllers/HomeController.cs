@@ -24,77 +24,73 @@ namespace SetYourTone.Controllers
         {
             return View();
         }
-        //public ViewResult DefUsersPage()
         [HttpGet]
         public ViewResult UserPage()
         {
             RuleModel userRule = new RuleModel();
-            userRule.startWorkPiece = "1";
+            userRule.StartLayerWorkPiece = "1";
             userRule.Offset = -1;
             userRule.Length = 3;
             userRule.DefaultCellMean = '0';
-            userRule.leftBorder = "0";
-            userRule.rightBorder = "0";
+            userRule.LeftBorder = "0";
+            userRule.RightBorder = "0";
 
             StateSaving RowsState = new StateSaving();
-            RowsState.Rule = "100;R;011;G;010;B;001;1";
-
-            ViewData["userRule.startWorkPiece"] = userRule.startWorkPiece;
+            RowsState.Triggers = "100;R;011;G;010;B;001;1";
+            RowsState.Frame = "-10;0;10;10";
+            //Верхняя строка при запуске
+            ViewData["userRule.StartLayerWorkPiece"] = userRule.StartLayerWorkPiece;
+            //Смещение относительно клетки
             ViewData["userRule.Offset"] = userRule.Offset;
+            //Длина подстроки триггера
             ViewData["userRule.Length"] = userRule.Length;
+            //Значение реакции по умолчанию
             ViewData["userRule.DefaultCellMean"] = userRule.DefaultCellMean;
-            ViewData["userRule.leftBorder"] = userRule.leftBorder;
-            ViewData["userRule.rightBorder"] = userRule.rightBorder;
-            //Правило
-            //1.Кол-во триггеров.
-            //2.Смещение относительно клетки
-            //3.Длина триггера
-            //4.Значение клетки по умолчанию
-            //5.Левая граница
-            //6.Правая граница
-            //7-end. Триггеры в виде подстрока; реакция - символ;
-            ViewData["Rule"] = RowsState.Rule;
-            //Информация для построения кадра
-            //1.Позиция стартовой строки в базовом массиве (на будущее)
-            //2.Стартовая строка
-            //3;4 координаты левого верхнего угла X относительно центра, а Y положительный сверху вниз
-            //5;6 координаты правого нижнего угла X относительно центра, а Y положительный сверху вниз
-            string strCurFrame = "-10;0;10;10";
-            ViewData["Frame"] = strCurFrame;
+            //Левая граница
+            ViewData["userRule.LeftBorder"] = userRule.LeftBorder;
+            //Правая граница
+            ViewData["userRule.RightBorder"] = userRule.RightBorder;
 
-            Dictionary<string, char> Trs = Unwraper.TriggersUnwraper (RowsState.Rule);
+            //Триггеры в виде подстрока; реакция - символ;
+            ViewData["RowsState.Triggers"] = RowsState.Triggers;
+            //Координаты для построения кадра
+            //1;2 координаты левого верхнего угла - X относительно центра, а Y положительный сверху вниз
+            //3;4 координаты правого нижнего угла - X относительно центра, а Y положительный сверху вниз
+            ViewData["RowsState.Frame"] = RowsState.Frame;
 
-            Coordinator DefaultFrame = new Coordinator(userRule, Trs, strCurFrame);
-            ViewData["Message"] = DefaultFrame.frame;
+            Dictionary<string, char> Trs = Unwraper.TriggersUnwraper (RowsState.Triggers);
+
+            ArrWorkers Base = new ArrWorkers(userRule, Trs, RowsState.Frame);
+            ViewData["Message"] = Base.frame;
             return View("UserPage");
         }
         [HttpPost]
         public ViewResult UserPage(RuleModel userRule, StateSaving RowsState)
         {
-            ViewData["userRule.startWorkPiece"] = userRule.startWorkPiece;
+            //Верхняя строка от пользователя
+            ViewData["userRule.StartLayerWorkPiece"] = userRule.StartLayerWorkPiece;
+            //Смещение относительно клетки
             ViewData["userRule.Offset"] = userRule.Offset;
+            //Длина подстроки триггера
             ViewData["userRule.Length"] = userRule.Length;
+            //Значение реакции по умолчанию
             ViewData["userRule.DefaultCellMean"] = userRule.DefaultCellMean;
-            ViewData["userRule.leftBorder"] = userRule.leftBorder;
-            ViewData["userRule.rightBorder"] = userRule.rightBorder;
-            //Правило
-            //1.Смещение относительно клетки
-            //2.Длина триггера
-            //3.Значение клетки по умолчанию
-            //4.Левая граница
-            //5.Правая граница
-            //6-end. Триггеры в виде подстрока; реакция - символ;
-            ViewData["Rule"] = RowsState.Rule;
-            //Информация для построения кадра
-            //1;2 координаты левого верхнего угла X относительно центра, а Y положительный сверху вниз
-            //3;4 координаты правого нижнего угла X относительно центра, а Y положительный сверху вниз
-            string strCurFrame = RowsState.Frame;
-            ViewData["Frame"] = strCurFrame;
+            //Левая граница
+            ViewData["userRule.LeftBorder"] = userRule.LeftBorder;
+            //Правая граница
+            ViewData["userRule.RightBorder"] = userRule.RightBorder;
+            
+            //Триггеры в виде "подстрока 1; реакция 1; ... подстрока n; реакция n"
+            ViewData["RowsState.Triggers"] = RowsState.Triggers;
+            //Координаты для построения кадра
+            //1;2 координаты левого верхнего угла - X относительно центра, а Y положительный сверху вниз
+            //3;4 координаты правого нижнего угла - X относительно центра, а Y положительный сверху вниз
+            ViewData["RowsState.Frame"] = RowsState.Frame;
 
-            Dictionary<string, char> Trs = Unwraper.TriggersUnwraper(RowsState.Rule);
+            Dictionary<string, char> Trs = Unwraper.TriggersUnwraper(RowsState.Triggers);
 
-            Coordinator UserFrame = new Coordinator(userRule, Trs, strCurFrame);
-            ViewData["Message"] = UserFrame.frame;
+            ArrWorkers Base = new ArrWorkers(userRule, Trs, RowsState.Frame);
+            ViewData["Message"] = Base.frame;
             return View("UserPage");
         }
         public IActionResult Privacy()

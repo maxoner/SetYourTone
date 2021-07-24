@@ -7,7 +7,7 @@ namespace SetYourTone.Models
 {
     public class StateSaving
     {
-        public string Rule { get; set; }
+        public string Triggers { get; set; }
         public string Frame { get; set; }
     }
 

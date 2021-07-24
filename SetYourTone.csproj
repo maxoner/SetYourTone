@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <Compile Remove="Models\Class.cs" />
+    <Compile Remove="Services\Coordinator.cs" />
+    <Compile Remove="Services\RuleStruct.cs" />
   </ItemGroup>
 
   <ItemGroup>
