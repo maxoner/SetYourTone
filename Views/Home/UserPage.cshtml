@@ -1,8 +1,13 @@
 ﻿
-@{char[,] dat = (char[,])ViewData["Message"]; }
-<br/>
-<strong>В реакциях на триггер возможны следующие символы-цвета: 
-    R - Red, G - Green, B - Blue, Y - Yellow, 0 - White, 1 - Black, other - Purple</strong>
+@{
+  char[,] dat = (char[,])ViewData["Message"]; 
+  Dictionary<string, char> Triggers = (Dictionary<string, char>)ViewData["TriggersDictionary"];
+ }
+<br />
+<strong>
+    В реакциях на триггер возможны следующие символы-цвета:
+    R - Red, G - Green, B - Blue, Y - Yellow, 0 - White, 1 - Black, other - Purple
+</strong>
 <br />
 <div>
     <table width="100%" cellpadding="5">
@@ -24,13 +29,13 @@
 
                         int x = 0, y = 0;
                         int deltaX;
-                        if (width / dat.GetLength(0) <= height / dat.GetLength(1))
+                        if (width / dat.GetLength(1) <= height / dat.GetLength(0))
                         {
-                            deltaX = width / dat.GetLength(0);
+                            deltaX = width / dat.GetLength(1);
                         }
                         else
                         {
-                            deltaX = height / dat.GetLength(1);
+                            deltaX = height / dat.GetLength(0);
                         }
 
                         int SizeSqXY = deltaX;
@@ -96,10 +101,6 @@
                     <label>Длина триггера от отступа</label><br />
                     <input type="text" name="userRule.Length" value="@ViewData["userRule.Length"]" /><br /><br />
 
-                    <label>Строка триггеров </label><br />
-                    <label>триггер 1; реакция 1; ... триггер n; реакция n </label><br /><br />
-                    <input type="text" name="RowsState.Triggers" value="@ViewData["RowsState.Triggers"]" /><br />
-
                     <label>Верхняя строка для старта</label><br />
                     <input type="text" name="userRule.startLayerWorkPiece" value="@ViewData["userRule.StartLayerWorkPiece"]" /><br />
 
@@ -107,10 +108,37 @@
                     <label>x левый; y верхний; х правый; y нижний</label><br />
                     <input type="text" name="RowsState.Frame" value="@ViewData["RowsState.Frame"]" /><br />
 
+                    <label>Строка триггеров </label><br />
+
+                    <input type="hidden" name="RowsState.Triggers" value="@ViewData["RowsState.Triggers"]" /><br />
+                    <label>Добавление триггеров</label><br />
+                    <input type="text" name="CurrentEdit.TriggerToAdd" size="5"/>
+                    <input type="text" name="CurrentEdit.ReactionToAdd" size="1"/><br />
+                    <label>Удаление выбранных триггеров</label><br />
+                    <select name="CurrentEdit.TriggersKeysToDelete" size="3" multiple>
+                        @{ foreach (string item in Triggers.Keys)
+                            {
+                                <option value="@item">@item  @Triggers[item]   </option>
+                            }
+                        }
+                    </select>
+
                     <input type="submit" value="Отправить" />
+
+
                 </form>
+                <p>Текущие триггеры</p>
+                @{
+
+                    foreach (string key in Triggers.Keys)
+                    {
+                        <label>
+                            @key  @Triggers[key]
+                        </label><br />
+                    }
+                }
             </th>
         </tr>
     </table>
-    
+
 </div>

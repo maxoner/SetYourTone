@@ -9,7 +9,7 @@ namespace SetYourTone.Models
     {
         public static Dictionary<string, char> TriggersUnwraper (string stringTriggers)
         {
-            string[] TriggersStrings = stringTriggers.Split(';');
+            string[] TriggersStrings = stringTriggers.Split(';', StringSplitOptions.RemoveEmptyEntries);
             Dictionary<string, char> TriggersDict= new Dictionary<string, char>();
             for (int i = 0; i < TriggersStrings.Length; i += 2)
             {
