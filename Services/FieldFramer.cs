@@ -6,10 +6,10 @@ using System.Text;
 using SetYourTone.Models;
 namespace SetYourTone.Services
 {
-    public class ArrWorkers
+    public class FieldFramer
     {
         //"Большой" массив, из него вырезается кадр и отправляется в представление.
-        private char[,] arr;
+        private char[,] bigArray;
         public char[,] frame;
         private string usersFirstString;
         private string topLayer;
@@ -20,9 +20,9 @@ namespace SetYourTone.Services
         private int triggerOffset;
         private char defaultCellMean;
         private Dictionary<string, char> Triggers;
-        private int startLayerCenter;
+        private int topLayerCenter;
         //Конструктор инициализирует массив и вставляет в него первую строку и левую/правую границы по бокам.
-        public ArrWorkers(RuleModel RuleParameters, Dictionary<string, char> inputTriggers, string currentUserFrame)
+        public FieldFramer(RuleModel RuleParameters, Dictionary<string, char> inputTriggers, string currentUserFrame)
         {
             string[] splittedFrame = currentUserFrame.Split(';');
             int XLeft = Convert.ToInt32(splittedFrame[0]);
@@ -46,12 +46,12 @@ namespace SetYourTone.Services
             topLayer = expander(usersFirstString,
                                 maxStepAnalyzer('l'), maxStepAnalyzer('r'),
                                 XLeft, XRight,
-                                leftBorder.Length, deep, out startLayerCenter);
+                                leftBorder.Length, deep, out topLayerCenter);
             preFiller();
             Filler();
             frame = Framer(XLeft, YTop, XRight, YFoot);
         }
-        //public ArrWorkers
+
         private int centerFinder(int userLayerLength)
         {
             if (userLayerLength % 2 == 1)
@@ -72,7 +72,9 @@ namespace SetYourTone.Services
             }
             return maxOfst;
         }
-        private string expander(string workPiece, int leftMoving, int rightMoving, int frameLeft, int frameRight, int leftBorderLength, int howDeepWeGo, out int center)
+        private string expander(string workPiece, int leftMoving, int rightMoving, 
+                                int frameLeft, int frameRight, 
+                                int leftBorderLength, int howDeepWeGo, out int center)
         {
             //на каждой строке автомат может затронуть некоторое максимальное
             //количество клеток левее/правее относительно верхних, на основе широты захвата триггеров,
@@ -96,13 +98,12 @@ namespace SetYourTone.Services
                 {
                     rightStencil = rightStencil + "0";
                 }
-                //rightStencil = rightStencil + "0";
             }
-
+            //центр изначальной строки
             center = centerFinder(workPiece.Length);
-            //расстояние от центра пользовательской строки до края массива,
-            //включает длину пользовательской строки до центра (=center), распространение, длину границы
-            //требуется для определения центра
+            //Расстояние от центра пользовательской строки до края массива,
+            //включает длину пользовательской строки до центра (=center), распространение, длину границы,
+            //требуется для определения центра.
             int leftRangeToBorder = center + leftStencil.Length;
             //Дополнения слева/справа, чтобы пользовательский кадр вошёл.
             if (frameLeft < 0)
@@ -124,26 +125,27 @@ namespace SetYourTone.Services
             string layer = leftStencil + workPiece + rightStencil;
             return layer;
         }
+        //Метод инициализирует большой массив, помещает в него первую строку и границы по бокам.
         private void preFiller ()
         {
-            arr = new char[deep, leftBorder.Length + topLayer.Length + rightBorder.Length];
+            bigArray = new char[deep, leftBorder.Length + topLayer.Length + rightBorder.Length];
             //Выставление левой и правой границ на основе образцов string left/right border полученных от пользователя.
-            for (int i = 0; i < arr.GetLength(0); i++)
+            for (int i = 0; i < bigArray.GetLength(0); i++)
             {
                 for (int j = 0; j < leftBorder.Length; j++)
                 {
-                    arr[i, j] = leftBorder[j];
+                    bigArray[i, j] = leftBorder[j];
                 }
-                for (int j = arr.GetLength(1) - rightBorder.Length; j < arr.GetLength(1); j++)
+                for (int j = bigArray.GetLength(1) - rightBorder.Length; j < bigArray.GetLength(1); j++)
                 {
-                    arr[i, j] = rightBorder[j - (arr.GetLength(1) - rightBorder.Length)];
+                    bigArray[i, j] = rightBorder[j - (bigArray.GetLength(1) - rightBorder.Length)];
                 }
             }
 
             // Занесение topLayer в первою строку между границ.
-            for (int i = leftBorder.Length; i < arr.GetLength(1) - rightBorder.Length; i++)
+            for (int i = leftBorder.Length; i < bigArray.GetLength(1) - rightBorder.Length; i++)
             {
-                arr[0, i] = topLayer[i - leftBorder.Length];
+                bigArray[0, i] = topLayer[i - leftBorder.Length];
             }
             return;
         }
@@ -161,55 +163,55 @@ namespace SetYourTone.Services
                 leftInnerOffset = leftBorder.Length;
             else
             {
-                for (int i = 0; i < arr.GetLength(0); i++)
+                for (int i = 0; i < bigArray.GetLength(0); i++)
                 {
                     for (int j = leftBorder.Length; j < leftInnerOffset; j++)
                     {
-                        arr[i, j] = defaultCellMean;
+                        bigArray[i, j] = defaultCellMean;
                     }
                 }
             }
             if (rightBorder.Length >= rightInnerOffset) rightInnerOffset = rightBorder.Length;
             else
             {
-                for (int i = 0; i < arr.GetLength(0); i++)
+                for (int i = 0; i < bigArray.GetLength(0); i++)
                 {
-                    for (int j = arr.GetLength(1) - rightInnerOffset; j < arr.GetLength(1) - rightBorder.Length; j++)
+                    for (int j = bigArray.GetLength(1) - rightInnerOffset; j < bigArray.GetLength(1) - rightBorder.Length; j++)
                     {
-                        arr[i, j] = defaultCellMean;
+                        bigArray[i, j] = defaultCellMean;
                     }
                 }
             }
 
             //подстрока для проверки совпадения в триггерах.
-            string subArr;
+            string substring;
             //Builder для неё, очищается после присваивания к строке.
-            StringBuilder builderSubArr = new StringBuilder(triggerLength);
+            StringBuilder builderSubstring = new StringBuilder(triggerLength);
             
             //итерируемся по высоте со второй строки массива.
-            for (int i = 1; i < arr.GetLength(0); i++)
+            for (int i = 1; i < bigArray.GetLength(0); i++)
             {
                 //итерируюсь по горизонтали с левого отступа.
-                for (int j = leftInnerOffset; j < arr.GetLength(1) - rightInnerOffset; j++)
+                for (int j = leftInnerOffset; j < bigArray.GetLength(1) - rightInnerOffset; j++)
                 {
                     //вынимаю подстроку для триггеров.
                     for (int indSubstr = 0; indSubstr < triggerLength; indSubstr++)
                     {
-                        if (arr[i - 1, j + triggerOffset + indSubstr] != '0')
-                             builderSubArr.Append ('1');
-                        else 
-                             builderSubArr.Append ('0');
+                        if (bigArray[i - 1, j + triggerOffset + indSubstr] != '0')
+                            builderSubstring.Append ('1');
+                        else
+                            builderSubstring.Append ('0');
                     }
-                    subArr = builderSubArr.ToString();
-                    builderSubArr.Clear();             
+                    substring = builderSubstring.ToString();
+                    builderSubstring.Clear();             
                     //Ищу в триггерах.
-                    if (Triggers.TryGetValue(subArr, out char value))
+                    if (Triggers.TryGetValue(substring, out char value))
                     {
-                        arr[i,j] = value;
+                        bigArray[i,j] = value;
                     }
                     else
                     {
-                        arr[i, j] = defaultCellMean;
+                        bigArray[i, j] = defaultCellMean;
                     }
                 }
             }
@@ -217,19 +219,19 @@ namespace SetYourTone.Services
         //Получение подмассива для пользователя - кадра.
         public char[,] Framer(int XLeft, int YTop, int XRight, int YFoot)
         {
-            XLeft = XLeft + startLayerCenter;
-            XRight = XRight + startLayerCenter;
+            XLeft  = XLeft + topLayerCenter;
+            XRight = XRight + topLayerCenter;
 
             int Xlength = XRight - XLeft + 1;
             int Ylength = YFoot - YTop + 1;
-            char[,] frame = new char[Xlength,Ylength];
+            char[,] frame = new char[Ylength, Xlength];
             //Итерация по высоте.
             for (int i = 0; i < Ylength; i++)
             {
                 //Итерация по строкам.
                 for (int j = 0; j < Xlength; j++)
                 {
-                    frame[j,i] = arr[YTop + i, XLeft + j];
+                    frame[i, j] = bigArray[YTop + i, XLeft + j];
                 }
             }
             return frame;

@@ -35,11 +35,11 @@
 
                         int SizeSqXY = deltaX;
 
-                        for (int k = 0; k < dat.GetLength(1); k++)
+                        for (int k = 0; k < dat.GetLength(0); k++)
                         {
-                            for (int i = 0; i < dat.GetLength(0); i++)
+                            for (int i = 0; i < dat.GetLength(1); i++)
                             {
-                                char item = dat[i, k];
+                                char item = dat[k, i];
                                 switch (item)
                                 {
                                     case '1':
