@@ -13,13 +13,6 @@ namespace SetYourTone.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
         public ViewResult Index()
         {
             return View();
@@ -60,7 +53,7 @@ namespace SetYourTone.Controllers
 
             Dictionary<string, char> Trs = Unwraper.TriggersUnwraper (RowsState.Triggers);
 
-            ArrWorkers Base = new ArrWorkers(userRule, Trs, RowsState.Frame);
+            FramerLineByLine Base = new FramerLineByLine(userRule, Trs, RowsState.Frame);
             ViewData["Message"] = Base.frame;
             return View("UserPage");
         }
@@ -89,13 +82,9 @@ namespace SetYourTone.Controllers
 
             Dictionary<string, char> Trs = Unwraper.TriggersUnwraper(RowsState.Triggers);
 
-            ArrWorkers Base = new ArrWorkers(userRule, Trs, RowsState.Frame);
-            ViewData["Message"] = Base.frame;
+            FramerLineByLine BaseLineByLine = new FramerLineByLine(userRule, Trs, RowsState.Frame);
+            ViewData["Message"] = BaseLineByLine.frame;
             return View("UserPage");
-        }
-        public IActionResult Privacy()
-        {
-            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
