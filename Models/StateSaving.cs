@@ -9,6 +9,7 @@ namespace SetYourTone.Models
     {
         public string Triggers { get; set; }
         public string Frame { get; set; }
+        public string Colors { get; set; }
     }
 
 }
