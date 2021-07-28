@@ -9,13 +9,23 @@ namespace SetYourTone.Models
     {
         public static Dictionary<string, char> TriggersUnwraper (string stringTriggers)
         {
-            string[] TriggersStrings = stringTriggers.Split(';');
+            string[] splittedTriggers = stringTriggers.Split(';', StringSplitOptions.RemoveEmptyEntries);
             Dictionary<string, char> TriggersDict= new Dictionary<string, char>();
-            for (int i = 0; i < TriggersStrings.Length; i += 2)
+            for (int i = 0; i < splittedTriggers.Length; i += 2)
             {
-                TriggersDict.Add(TriggersStrings[i], Convert.ToChar(TriggersStrings[i + 1]));
+                TriggersDict.Add(splittedTriggers[i], Convert.ToChar(splittedTriggers[i + 1]));
             }
             return TriggersDict;
+        }
+        public static Dictionary<char, string> ColorsUnwraper(string stringColors)
+        {
+            string[] splittedColors = stringColors.Split(';', StringSplitOptions.RemoveEmptyEntries);
+            Dictionary<char, string> ColorsDict = new Dictionary<char, string>();
+            for (int i = 0; i < splittedColors.Length; i += 2)
+            {
+                ColorsDict.Add(Convert.ToChar(splittedColors[i]), splittedColors[i + 1]);
+            }
+            return ColorsDict;
         }
     }
 }

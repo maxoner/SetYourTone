@@ -1,9 +1,10 @@
 ﻿
-@{char[,] dat = (char[,])ViewData["Message"]; }
-<br/>
-<strong>В реакциях на триггер возможны следующие символы-цвета: 
-    R - Red, G - Green, B - Blue, Y - Yellow, 0 - White, 1 - Black, other - Purple</strong>
-<br />
+@{
+    char[,] dat = (char[,])ViewData["Message"];
+    Dictionary<string, char> Triggers = (Dictionary<string, char>)ViewData["TriggersDictionary"];
+    Dictionary<char, string> colors = (Dictionary<char, string>)ViewData["ColorsDictionary"];
+ }
+
 <div>
     <table width="100%" cellpadding="5">
         <tr>
@@ -13,58 +14,27 @@
                     int height = 700;
                 }
                 <svg height="@height" wight="@width" viewBox="0 0 @width @height" xmlns="http://www.w3.org/2000/svg">
-                    @{ Dictionary<string, string> colors = new Dictionary<string, string>(4);
-                        colors.Add("Red", "255, 0, 0");
-                        colors.Add("Green", "0, 128, 0");
-                        colors.Add("Blue", "0, 0, 255");
-                        colors.Add("Yellow", "255, 255, 0");
-                        colors.Add("White", "255, 255, 255");
-                        colors.Add("Black", "0, 0, 0");
-                        colors.Add("Purple", "128, 0, 128");
-
+                    @{
                         int x = 0, y = 0;
                         int deltaX;
-                        if (width / dat.GetLength(0) <= height / dat.GetLength(1))
+                        if (width / dat.GetLength(1) <= height / dat.GetLength(0))
                         {
-                            deltaX = width / dat.GetLength(0);
+                            deltaX = width / dat.GetLength(1);
                         }
                         else
                         {
-                            deltaX = height / dat.GetLength(1);
+                            deltaX = height / dat.GetLength(0);
                         }
 
                         int SizeSqXY = deltaX;
 
-                        for (int k = 0; k < dat.GetLength(1); k++)
+                        for (int k = 0; k < dat.GetLength(0); k++)
                         {
-                            for (int i = 0; i < dat.GetLength(0); i++)
+                            for (int i = 0; i < dat.GetLength(1); i++)
                             {
-                                char item = dat[i, k];
-                                switch (item)
-                                {
-                                    case '1':
-                                        <rect x="@x" y="@y" width="@SizeSqXY" height="@SizeSqXY" fill="rgb(@colors["Black"])" />
-                                        break;
-                                    case 'R':
-                                        <rect x="@x" y="@y" width="@SizeSqXY" height="@SizeSqXY" fill="rgb(@colors["Red"])" />
-                                        break;
-                                    case 'G':
-                                        <rect x="@x" y="@y" width="@SizeSqXY" height="@SizeSqXY" fill="rgb(@colors["Green"])" />
-                                        break;
-                                    case 'B':
-                                        <rect x="@x" y="@y" width="@SizeSqXY" height="@SizeSqXY" fill="rgb(@colors["Blue"])" />
-                                        break;
-                                    case 'Y':
-                                        <rect x="@x" y="@y" width="@SizeSqXY" height="@SizeSqXY" fill="rgb(@colors["Yellow"])" />
-                                        break;
-                                    case '0':
-                                        <rect x="@x" y="@y" width="@SizeSqXY" height="@SizeSqXY" fill="rgb(@colors["White"])" />
-                                        break;
-                                    default:
-                                        <rect x="@x" y="@y" width="@SizeSqXY" height="@SizeSqXY" fill="rgb(@colors["Purple"])" />
-                                        break;
+                                char item = dat[k, i];
+                                <rect x="@x" y="@y" width="@SizeSqXY" height="@SizeSqXY" fill="rgb(@colors[item])" />
 
-                                }
                                 x += deltaX;
                             }
                             x = 0;
@@ -96,10 +66,6 @@
                     <label>Длина триггера от отступа</label><br />
                     <input type="text" name="userRule.Length" value="@ViewData["userRule.Length"]" /><br /><br />
 
-                    <label>Строка триггеров </label><br />
-                    <label>триггер 1; реакция 1; ... триггер n; реакция n </label><br /><br />
-                    <input type="text" name="RowsState.Triggers" value="@ViewData["RowsState.Triggers"]" /><br />
-
                     <label>Верхняя строка для старта</label><br />
                     <input type="text" name="userRule.startLayerWorkPiece" value="@ViewData["userRule.StartLayerWorkPiece"]" /><br />
 
@@ -107,10 +73,69 @@
                     <label>x левый; y верхний; х правый; y нижний</label><br />
                     <input type="text" name="RowsState.Frame" value="@ViewData["RowsState.Frame"]" /><br />
 
+                    <input type="hidden" name="RowsState.Triggers" value="@ViewData["RowsState.Triggers"]" /><br />
+                    <label>Добавление триггеров</label><br />
+                    <input type="text" name="CurrentEdit.TriggerToAdd" size="5" />
+                    <input type="text" name="CurrentEdit.ReactionToAdd" size="1" /><br />
+                    <label>Удаление выбранных триггеров</label><br />
+                    <select name="CurrentEdit.TriggersKeysToDelete" size="3" multiple>
+                        @{ foreach (string item in Triggers.Keys)
+                            {
+                                <option value="@item">@item  @Triggers[item]   </option>
+                            }
+                        }
+                    </select>
+                    <br />
+                    <label>Удаление выбранных цветов</label><br />
+                    <select name="CurrentEdit.ColorsKeysToDelete" size="3" multiple>
+                        @{ foreach (char key in colors.Keys)
+                            {
+                                <option value="@key">@key  @colors[key]   </option>
+                            }
+                        }
+                    </select>
+                    <br />
+                    <label>Добавление цветов</label><br />
+                    <input type="text" name="CurrentEdit.ColorsKeyToAdd" size="1" />
+                    <input type="text" name="CurrentEdit.ColorsRGBToAdd" size="15" /><br />
+                    <input type="hidden" name="RowsState.Colors" size="5" value="@ViewData["RowsState.Colors"]" />
                     <input type="submit" value="Отправить" />
+
                 </form>
             </th>
         </tr>
     </table>
-    
+    <br />
+    <table width="1000">
+        <tr>
+            <th width="500">
+                <strong>
+                    Текущие триггеры <br/>
+                    @{
+                        foreach (string key in Triggers.Keys)
+                        {
+                            <label>
+                                @key  @Triggers[key]
+                            </label><br />
+                        }
+                    }
+                </strong>
+            </th>
+            <th width="500" align="left">
+                <strong>
+                    Текущее соответствие символа цвету RGB<br />
+                    @{
+                        foreach (char key in colors.Keys)
+                        {
+                            <label >
+                                <span style="color:rgb(@colors[key]);">█</span> @key  @colors[key]
+                            </label>
+                            <br />
+                        }
+                    }
+                </strong>
+            </th>
+        </tr>
+    </table>
+
 </div>
